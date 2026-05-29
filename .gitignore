@@ -11,3 +11,5 @@ reports/
 .env
 
 database/*.db
+
+*.tar.gz
