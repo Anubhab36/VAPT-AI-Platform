@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>
+        VAPT AI Dashboard
+    </title>
+
+    <style>
+
+        body {
+
+            font-family: Arial;
+
+            margin: 40px;
+
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+
+            color: #333;
+        }
+
+        .scan-card {
+
+            background: white;
+
+            padding: 20px;
+
+            margin-bottom: 20px;
+
+            border-radius: 10px;
+
+            box-shadow: 0 0 5px rgba(
+                0,
+                0,
+                0,
+                0.1
+            );
+        }
+
+        .risk {
+
+            font-weight: bold;
+
+            color: darkred;
+        }
+
+        .section-title {
+
+            margin-top: 20px;
+
+            color: #444;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>
+        VAPT AI Dashboard
+    </h1>
+
+    {% for scan in scans %}
+
+    <div class="scan-card">
+
+        <h2>
+            {{ scan.target }}
+        </h2>
+
+        <p>
+            <strong>Status:</strong>
+            {{ scan.status }}
+        </p>
+
+        <p>
+            <strong>Timestamp:</strong>
+            {{ scan.timestamp }}
+        </p>
+
+        <p>
+            <strong>Total Findings:</strong>
+            {{ scan.total_findings }}
+        </p>
+
+        <p class="risk">
+            Risk Score:
+            {{ scan.risk_score }}
+        </p>
+
+        <h3 class="section-title">
+            AI Summary
+        </h3>
+
+        <p>
+            {{ scan.ai_summary }}
+        </p>
+
+    </div>
+
+    {% endfor %}
+
+</body>
+
+</html>
