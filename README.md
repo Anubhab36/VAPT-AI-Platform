@@ -106,6 +106,10 @@ SQLite Database
 
 ![Analytics](screenshots/analytics.png)
 
+### Project Structure
+
+![Project Structure](screenshots/project_structure.png)
+
 ---
 
 ## Project Structure
