@@ -1,4 +1,5 @@
 import asyncio
+import uuid
 
 from fastapi import FastAPI
 from fastapi import Depends
@@ -34,11 +35,8 @@ from security.auth import (
 
 from database.db_manager import (
     initialize_database,
-
     get_all_scans,
-
     get_recent_scans,
-
     get_scan_analytics
 )
 
@@ -50,8 +48,13 @@ from utils.logger import (
     logger
 )
 
-app = FastAPI(
+from utils.cache_manager import (
+    get_cache,
+    set_cache,
+    cache_exists
+)
 
+app = FastAPI(
     title=APP_NAME
 )
 
@@ -60,12 +63,13 @@ templates = Jinja2Templates(
 )
 
 initialize_database()
+
 logger.info(
     f"{APP_NAME} starting..."
 )
 
-class ReconRequest(BaseModel):
 
+class ReconRequest(BaseModel):
     target: str
 
 
@@ -101,11 +105,8 @@ def dashboard(request: Request):
     scans = get_all_scans()
 
     return templates.TemplateResponse(
-
         request=request,
-
         name="dashboard.html",
-
         context={
             "scans": scans
         }
@@ -131,16 +132,6 @@ def scan_history(
     }
 
 
-from utils.cache_manager import (
-
-    get_cache,
-
-    set_cache,
-
-    cache_exists
-)
-
-
 @app.get("/analytics")
 def analytics(
 
@@ -154,9 +145,7 @@ def analytics(
     if cache_exists(cache_key):
 
         return {
-
             "source": "cache",
-
             "data": get_cache(
                 cache_key
             )
@@ -172,9 +161,7 @@ def analytics(
     )
 
     return {
-
         "source": "database",
-
         "data": analytics_data
     }
 
@@ -189,7 +176,12 @@ async def run_recon(
     )
 ):
 
+    scan_id = str(
+        uuid.uuid4()
+    )
+
     task_id = create_task(
+        scan_id,
         request.target
     )
 
@@ -208,6 +200,9 @@ async def run_recon(
 
         "task_id":
             task_id,
+
+        "scan_id":
+            scan_id,
 
         "target":
             request.target

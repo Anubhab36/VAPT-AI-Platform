@@ -349,6 +349,21 @@ http://127.0.0.1:8000/dashboard
 
 ---
 
+AI-Powered Analysis
+
+The platform integrates Google ADK and Gemini 2.5 Flash to perform
+LLM-powered vulnerability assessment reasoning.
+
+Reconnaissance results collected through Nmap, HTTPX and Subfinder
+are analyzed by Gemini to generate:
+
+• Executive Summaries
+• Risk Assessments
+• Findings Analysis
+• Remediation Recommendations
+
+---
+
 ## Sample Workflow
 
 1. User submits a target.

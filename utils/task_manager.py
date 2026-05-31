@@ -1,11 +1,14 @@
 task_registry = {}
 
+
 def create_task(scan_id, target):
 
     task_registry[scan_id] = {
         "target": target,
         "status": "queued"
     }
+
+    return scan_id
 
 
 def update_task_status(scan_id, status):
