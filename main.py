@@ -54,6 +54,8 @@ from utils.cache_manager import (
     cache_exists
 )
 
+from vapt_adk.runner import ask_agent
+
 app = FastAPI(
     title=APP_NAME
 )
@@ -71,6 +73,9 @@ logger.info(
 
 class ReconRequest(BaseModel):
     target: str
+
+class AgentRequest(BaseModel):
+    message: str
 
 
 @app.get("/")
@@ -207,3 +212,143 @@ async def run_recon(
         "target":
             request.target
     }
+
+@app.post("/agent")
+async def agent_chat(
+    request: AgentRequest,
+    authorized: bool = Depends(
+        verify_api_key
+    )
+):
+    """
+    AI-powered cybersecurity assistant.
+
+    Accepts a natural language request,
+    invokes the Google ADK Agent,
+    and returns a professional
+    security assessment.
+    """
+
+    try:
+
+        if not request.message.strip():
+
+            return {
+                "status": "error",
+                "message": "Message cannot be empty."
+            }
+
+        logger.info(
+            f"Agent request: {request.message}"
+        )
+
+        response = await ask_agent(
+            request.message
+        )
+
+        if response is None:
+
+            logger.warning(
+                "Agent returned no response."
+            )
+
+            return {
+
+                "status": "error",
+
+                "message":
+                    "The AI agent did not return a response."
+            }
+
+        logger.info(
+            "Agent completed successfully."
+        )
+
+        return {
+
+            "status": "success",
+
+            "response": response
+        }
+
+    except Exception as error:
+
+        logger.exception(
+            "Agent execution failed."
+        )
+
+        error_message = str(error)
+
+        # ----------------------------
+        # Gemini quota exceeded
+        # ----------------------------
+
+        if (
+            "RESOURCE_EXHAUSTED" in error_message
+            or "429" in error_message
+        ):
+
+            return {
+
+                "status": "error",
+
+                "message":
+                    "Gemini API quota exceeded. Please wait for the quota to reset or use a Google AI project with available quota.",
+
+                "details":
+                    error_message
+            }
+
+        # ----------------------------
+        # Gemini temporarily unavailable
+        # ----------------------------
+
+        if (
+            "503" in error_message
+            or "UNAVAILABLE" in error_message
+        ):
+
+            return {
+
+                "status": "error",
+
+                "message":
+                    "The Gemini AI service is temporarily unavailable. Please try again shortly.",
+
+                "details":
+                    error_message
+            }
+
+        # ----------------------------
+        # Timeout
+        # ----------------------------
+
+        if (
+            "timeout" in error_message.lower()
+        ):
+
+            return {
+
+                "status": "error",
+
+                "message":
+                    "The AI request timed out. Please try again.",
+
+                "details":
+                    error_message
+            }
+
+        # ----------------------------
+        # Generic error
+        # ----------------------------
+
+        return {
+
+            "status": "error",
+
+            "message":
+                "Unexpected error while processing your request.",
+
+            "details":
+                error_message
+        }

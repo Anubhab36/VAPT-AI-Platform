@@ -1,312 +1,220 @@
-# VAPT AI Platform
+# AI-Powered Agentic VAPT Platform
 
-## Overview
-
-VAPT AI Platform is an AI-assisted Vulnerability Assessment and Penetration Testing (VAPT) automation platform built using FastAPI. The platform automates reconnaissance, vulnerability intelligence gathering, risk evaluation, report generation, and security recommendations through a modular agent-based architecture.
-
-The project demonstrates modern backend engineering concepts including asynchronous execution, concurrent scanning, analytics APIs, authentication, caching, dashboard visualization, and automated reporting.
+An AI-powered Vulnerability Assessment and Penetration Testing (VAPT) platform that combines traditional cybersecurity reconnaissance tools with **Google Agent Development Kit (ADK)** and **Google Gemini AI** to perform intelligent security assessments and generate professional executive reports.
 
 ---
 
-## Key Features
+## 📌 Overview
 
-### Reconnaissance Automation
+Traditional vulnerability scanners produce raw technical findings that often require manual interpretation by security professionals. This project extends a conventional VAPT pipeline with an **Agentic AI Security Assistant** capable of understanding natural language requests, autonomously invoking reconnaissance tools, analyzing scan results, prioritizing risks, and generating remediation recommendations.
 
-* Automated target reconnaissance
-* Subdomain discovery using Subfinder
-* Network scanning using Nmap
-* Live host detection using httpx
+The platform integrates Google ADK for intelligent tool orchestration while preserving a modular FastAPI-based architecture.
 
-### Vulnerability Intelligence
+---
 
-* Mock vulnerability assessment engine
-* Attack surface identification
-* Risk-based finding classification
+# Features
 
-### AI-Assisted Analysis
+## Traditional VAPT Features
 
-* Automated AI-style summaries
-* Security recommendation generation
-* Risk evaluation and prioritization
-
-### Reporting System
-
+* Network reconnaissance
+* Fast port scanning using Nmap
+* Subdomain enumeration using Subfinder
+* Live host detection using HTTPX
+* Mock vulnerability scanning
+* Risk score calculation
+* Recommendation engine
 * Markdown report generation
 * JSON report generation
-* Historical scan storage
-
-### Dashboard & Analytics
-
-* Web dashboard for scan visualization
-* Scan history APIs
-* Analytics APIs
-* Cached intelligence retrieval
-
-### Security Features
-
-* API key authentication
-* Environment-based configuration
-* Protected API endpoints
-
-### Performance Features
-
-* Async task execution
-* Concurrent scanning
-* In-memory caching
-* Background task processing
+* Dashboard for scan history
+* SQLite database integration
+* API Key authentication
+* Concurrent scanning using ThreadPoolExecutor
+* Scan caching
+* Task management
 
 ---
 
-## Architecture
+## AI Features
 
-```text
-Frontend Dashboard
-        │
-        ▼
-FastAPI Backend
-        │
-        ▼
-Authentication Layer
-        │
-        ▼
-Async Task Execution
-        │
-        ▼
-Recon Agent
-        │
-        ▼
-Analysis Engine
-        │
-        ▼
-AI Summary Engine
-        │
-        ▼
-Recommendation Engine
-        │
-        ▼
-Reporting System
-        │
-        ▼
-SQLite Database
+* Google Gemini Integration
+* Google Agent Development Kit (ADK)
+* AI Security Assistant
+* Tool Calling
+* Natural language interaction
+* Executive security summaries
+* Risk prioritization
+* Automated remediation recommendations
+* AI-powered report generation
+
+---
+
+# Agentic Architecture
+
+```
+                           User
+                             │
+                             ▼
+                      FastAPI Backend
+                    ┌────────────────┐
+                    │                │
+                    ▼                ▼
+               POST /recon      POST /agent
+                    │                │
+                    │                ▼
+                    │         Google ADK Runner
+                    │                │
+                    │                ▼
+                    │        Root AI Agent
+                    │                │
+                    │        Tool Invocation
+                    │                │
+                    └───────────────▼
+                          Recon Tool
+                               │
+                               ▼
+                     Existing Recon Agent
+                               │
+          ┌────────────────────────────────────┐
+          │ Nmap                               │
+          │ Subfinder                          │
+          │ HTTPX                              │
+          │ Vulnerability Scanner              │
+          │ Risk Engine                        │
+          │ Recommendation Engine              │
+          │ Report Generator                   │
+          └────────────────────────────────────┘
+                               │
+                               ▼
+                       Gemini AI Analysis
+                               │
+                               ▼
+                    Executive Security Report
 ```
 
 ---
 
-## Screenshots
+# Project Structure
 
-### Dashboard
+```
+vapt-ai-project/
 
-![Dashboard](screenshots/dashboard.png)
-
-### Swagger API Documentation
-
-![Swagger](screenshots/swagger.png)
-
-### Analytics API
-
-![Analytics](screenshots/analytics.png)
-
-### Project Structure
-
-![Project Structure](screenshots/project_structure.png)
-
----
-
-## Project Structure
-
-```text
-VAPT-AI-Platform/
-│
 ├── agents/
 │   └── recon_agent.py
 │
 ├── analysis/
-│   ├── ai_summary.py
-│   ├── recommendation_engine.py
 │   ├── recon_analyzer.py
-│   └── risk_engine.py
+│   ├── recommendation_engine.py
+│   ├── risk_engine.py
+│   └── ai_summary.py
 │
 ├── config/
-│   └── settings.py
 │
 ├── database/
-│   └── db_manager.py
+│
+├── llm/
+│   └── gemini_analyzer.py
+│
+├── reports/
 │
 ├── security/
-│   └── auth.py
+│
+├── storage/
 │
 ├── templates/
-│   └── dashboard.html
 │
 ├── tools/
 │   ├── httpx_tool.py
 │   ├── mock_vuln_tool.py
 │   ├── nmap_tool.py
+│   ├── recon_tool.py
 │   └── subfinder_tool.py
 │
 ├── utils/
-│   ├── async_executor.py
-│   ├── cache_manager.py
-│   ├── logger.py
-│   ├── report_generator.py
-│   ├── storage_manager.py
-│   └── task_manager.py
 │
-├── reports/
-├── storage/
+├── vapt_adk/
+│   ├── agent.py
+│   ├── runner.py
+│   └── tools/
+│       └── recon_tool.py
+│
+├── screenshots/
+│
 ├── main.py
 ├── requirements.txt
-├── README.md
-└── .env
+└── README.md
 ```
 
 ---
 
-## Technology Stack
+# Technology Stack
 
-### Backend
+## Backend
 
+* Python
 * FastAPI
-* Python 3.11+
+* Uvicorn
 
-### Database
+## Artificial Intelligence
+
+* Google Gemini API
+* Google Agent Development Kit (ADK)
+
+## Cybersecurity
+
+* Nmap
+* HTTPX
+* Subfinder
+
+## Database
 
 * SQLite
 
-### Frontend
+## Reporting
 
-* Jinja2 Templates
-* HTML/CSS
+* Markdown
+* JSON
 
-### Security Tools
+## Frontend
 
-* Nmap
-* Subfinder
-* httpx
-
-### Concurrency
-
-* AsyncIO
-* ThreadPoolExecutor
-
-### Configuration
-
-* Python Dotenv
+* HTML
+* CSS
+* Jinja2
 
 ---
 
-## API Endpoints
+# Installation
 
-### POST /recon
-
-Starts a reconnaissance scan.
-
-#### Request
-
-```json
-{
-  "target": "scanme.nmap.org"
-}
-```
-
-#### Response
-
-```json
-{
-  "message": "Recon task queued",
-  "target": "scanme.nmap.org"
-}
-```
-
----
-
-### GET /tasks
-
-Returns active and completed scan tasks.
-
----
-
-### GET /history
-
-Returns recent scan history.
-
-Example:
-
-```text
-/history?limit=10
-```
-
----
-
-### GET /analytics
-
-Returns platform analytics.
-
-Example response:
-
-```json
-{
-  "total_scans": 10,
-  "average_risk_score": 14.2,
-  "total_findings": 50
-}
-```
-
----
-
-### GET /dashboard
-
-Displays the web dashboard containing:
-
-* Scan history
-* Risk scores
-* Findings
-* AI summaries
-
----
-
-## Authentication
-
-Protected endpoints require an API key.
-
-Header:
-
-```text
-x-api-key: vapt-secret-key
-```
-
----
-
-## Installation
-
-### Clone Repository
+## Clone Repository
 
 ```bash
-git clone https://github.com/Anubhab36/VAPT-AI-Platform.git
-cd VAPT-AI-Platform
+git clone https://github.com/yourusername/vapt-ai-project.git
+
+cd vapt-ai-project
 ```
 
-### Create Virtual Environment
+---
+
+## Create Virtual Environment
+
+Linux/macOS
 
 ```bash
-python -m venv venv
-```
+python3 -m venv venv
 
-### Activate Virtual Environment
-
-Linux/macOS:
-
-```bash
 source venv/bin/activate
 ```
 
-Windows:
+Windows
 
 ```bash
+python -m venv venv
+
 venv\Scripts\activate
 ```
 
-### Install Dependencies
+---
+
+## Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -314,22 +222,38 @@ pip install -r requirements.txt
 
 ---
 
-## Environment Configuration
+## Install External Tools
 
-Create a `.env` file:
+### Nmap
 
-```env
-API_KEY=vapt-secret-key
-APP_NAME=VAPT AI Platform
-DEBUG=False
-COMMAND_TIMEOUT=15
+Ubuntu
+
+```bash
+sudo apt install nmap
 ```
 
 ---
 
-## Running the Platform
+### Subfinder
 
-Start the server:
+```bash
+go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+```
+
+---
+
+## Configure Environment Variables
+
+Create a `.env` file.
+
+```env
+GOOGLE_API_KEY=YOUR_GEMINI_API_KEY
+API_KEY=YOUR_SECRET_API_KEY
+```
+
+---
+
+# Running the Project
 
 ```bash
 uvicorn main:app --reload
@@ -337,88 +261,248 @@ uvicorn main:app --reload
 
 Open:
 
-```text
-Swagger UI:
+```
 http://127.0.0.1:8000/docs
 ```
 
-```text
-Dashboard:
-http://127.0.0.1:8000/dashboard
+Swagger UI will display all available endpoints.
+
+---
+
+# API Endpoints
+
+## Home
+
+```
+GET /
+```
+
+Returns platform status.
+
+---
+
+## Dashboard
+
+```
+GET /dashboard
+```
+
+Displays scan history.
+
+---
+
+## Analytics
+
+```
+GET /analytics
+```
+
+Returns platform analytics.
+
+---
+
+## Scan History
+
+```
+GET /history
+```
+
+Returns recent scans.
+
+---
+
+## Tasks
+
+```
+GET /tasks
+```
+
+Returns background task status.
+
+---
+
+## Traditional Recon API
+
+```
+POST /recon
+```
+
+Example
+
+```json
+{
+    "target":"scanme.nmap.org"
+}
+```
+
+Response
+
+* Reconnaissance Results
+* Vulnerabilities
+* Risk Score
+* Recommendations
+* Report Paths
+
+---
+
+## Agentic AI Endpoint
+
+```
+POST /agent
+```
+
+Example
+
+```json
+{
+    "message":"Perform a security assessment on scanme.nmap.org"
+}
+```
+
+The AI Agent automatically:
+
+* Understands the request
+* Invokes the Recon Tool
+* Performs reconnaissance
+* Analyzes findings
+* Calculates risks
+* Generates recommendations
+* Returns a professional executive report
+
+---
+
+# AI Workflow
+
+```
+Natural Language Request
+
+↓
+
+Google ADK Runner
+
+↓
+
+Google ADK Root Agent
+
+↓
+
+Tool Calling
+
+↓
+
+Recon Tool
+
+↓
+
+Recon Agent
+
+↓
+
+Nmap
+Subfinder
+HTTPX
+
+↓
+
+Risk Analysis
+
+↓
+
+Recommendations
+
+↓
+
+Gemini AI
+
+↓
+
+Executive Security Report
 ```
 
 ---
 
-## AI-Powered Analysis
+# Example AI Request
 
-The platform integrates Google ADK and Gemini 2.5 Flash to perform
-LLM-powered vulnerability assessment reasoning.
+```
+Perform a security assessment on scanme.nmap.org
+```
 
-Reconnaissance results collected through Nmap, HTTPX and Subfinder
-are analyzed by Gemini to generate:
+Example Response
 
-• Executive Summaries
-• Risk Assessments
-• Findings Analysis
-• Remediation Recommendations
+```
+Executive Summary
 
----
+Attack Surface
 
-## Sample Workflow
+Open Services
 
-1. User submits a target.
-2. Recon Agent launches concurrent scans.
-3. Results are analyzed.
-4. Risk scores are calculated.
-5. AI summaries are generated.
-6. Recommendations are produced.
-7. Reports are generated.
-8. Results are stored in SQLite.
-9. Dashboard displays findings.
-10. Analytics APIs provide intelligence insights.
+Risk Assessment
+
+Security Findings
+
+Recommended Remediation
+
+Overall Security Posture
+```
 
 ---
 
-## Future Enhancements
+# Screenshots
 
-The current implementation represents an MVP focused on reconnaissance automation, analysis, and reporting.
+Include screenshots of:
 
-Planned enterprise-grade enhancements include:
-
-* Google ADK integration
-* LLM-powered reasoning agents
-* Neo4j attack graph modeling
-* PostgreSQL migration
-* Redis caching
-* Docker-based agent isolation
-* Nuclei integration
-* OWASP ZAP integration
-* SIEM integrations
-* Continuous attack surface monitoring
+* Dashboard
+* Swagger API
+* Analytics
+* AI Agent Response
+* Project Structure
 
 ---
 
-## Learning Outcomes
+# Future Improvements
 
-This project demonstrates:
-
-* Backend Engineering
-* Async Programming
-* Concurrent Execution
-* API Security
-* Database Design
-* Analytics APIs
-* Reporting Systems
-* Full-Stack Integration
-* Cybersecurity Automation
-* Agent-Based Architecture
+* CVE Database Integration
+* OWASP ZAP Integration
+* Nikto Integration
+* Nuclei Integration
+* Docker Support
+* Kubernetes Deployment
+* SIEM Integration
+* Threat Intelligence APIs
+* Multi-Agent Collaboration
+* PDF Report Generation
+* Email Reporting
 
 ---
 
-## Author
+# Learning Outcomes
 
-Anubhab Chakraborty
+This project demonstrates practical implementation of:
 
-Computer Science Engineering Student
+* Vulnerability Assessment
+* Penetration Testing
+* FastAPI Development
+* Agentic AI
+* Google ADK
+* Google Gemini
+* Tool Calling
+* Concurrent Programming
+* REST API Development
+* Risk Assessment
+* Report Generation
+* Authentication
+* Database Integration
 
-AI-Assisted Cybersecurity Platform Project
+---
+
+# Resume Description
+
+**AI-Powered Agentic VAPT Platform | Python, FastAPI, Google ADK, Gemini AI, Nmap, SQLite**
+
+Developed an AI-powered Vulnerability Assessment and Penetration Testing platform integrating Google Agent Development Kit (ADK) with FastAPI. Built an autonomous cybersecurity assistant capable of interpreting natural language requests, orchestrating reconnaissance tools, performing AI-assisted security analysis, calculating risk scores, and generating executive security reports. Implemented concurrent scanning, authentication, dashboard visualization, report generation, caching, and SQLite-based scan management.
+
+---
+
+# License
+
+This project is developed for educational and research purposes.

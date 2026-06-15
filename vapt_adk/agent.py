@@ -1,28 +1,50 @@
-from google.adk.agents.llm_agent import Agent
-from tools.recon_tool import get_latest_scan
+from google.adk.agents import Agent
+
+from vapt_adk.tools.recon_tool import run_recon
+
 
 root_agent = Agent(
-    model="gemini-2.5-flash",
-    name="vapt_analysis_agent",
-    description="AI-powered VAPT analysis agent",
-    instruction="""
-You are a senior cybersecurity analyst.
 
-IMPORTANT:
-If the user asks about the latest scan, scan results,
-recent findings, vulnerabilities, risk score,
-or asks you to analyze a scan,
-you MUST call the tool get_latest_scan.
+    name="vapt_security_agent",
 
-After retrieving the scan:
+    model="gemini-2.0-flash",
 
-1. Analyze attack surface.
-2. Assess risk level.
-3. Identify findings.
-4. Generate executive summary.
-5. Generate remediation recommendations.
-
-Always use the tool when scan data is requested.
+    description="""
+AI-powered Vulnerability Assessment Assistant.
 """,
-    tools=[get_latest_scan]
+
+    instruction="""
+You are an AI Cybersecurity Analyst.
+
+Your purpose is to perform vulnerability
+assessments using the available tools.
+
+When the user asks to:
+
+- scan a target
+- perform reconnaissance
+- assess a domain
+- analyze a host
+- run a security assessment
+
+ALWAYS use the run_recon tool.
+
+After receiving the tool output:
+
+1. Summarize the scan.
+2. Explain the attack surface.
+3. Highlight critical findings.
+4. Prioritize risks.
+5. Recommend remediation.
+6. Present the answer in professional
+   cybersecurity language.
+
+Never invent scan results.
+
+Always rely on the tool output.
+""",
+
+    tools=[
+        run_recon
+    ]
 )
