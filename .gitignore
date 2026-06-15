@@ -71,3 +71,6 @@ service-account.json
 # Test Files
 # =========================
 test_gemini.py
+test_*.py
+.pytest_cache/
+.coverage
