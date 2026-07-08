@@ -8,60 +8,112 @@ from config.settings import (
 
 
 def run_subfinder(target):
+    """
+    Executes Subfinder and returns a
+    standardized response object.
+    """
+
+    command = [
+        "subfinder",
+        "-silent",
+        "-timeout",
+        "5",
+        "-d",
+        target
+    ]
 
     try:
 
-        command = [
-            "subfinder",
-            "-silent",
-            "-timeout",
-            "5",
-            "-d",
-            target
-        ]
-
         logger.info(
-            f"Executing command: "
-            f"{' '.join(command)}"
+            f"Executing command: {' '.join(command)}"
         )
 
         result = subprocess.run(
-
             command,
-
             capture_output=True,
-
             text=True,
-
             timeout=COMMAND_TIMEOUT
         )
 
         output = result.stdout.strip()
 
-        if not output:
-
-            return []
-
-        subdomains = output.splitlines()
-
-        logger.info(
-            "Command executed successfully"
+        subdomains = (
+            output.splitlines()
+            if output
+            else []
         )
 
-        return subdomains
+        logger.info(
+            f"Subfinder discovered "
+            f"{len(subdomains)} subdomains."
+        )
+
+        return {
+
+            "success": True,
+
+            "tool": "subfinder",
+
+            "target": target,
+
+            "data": subdomains,
+
+            "error": None
+        }
 
     except subprocess.TimeoutExpired:
 
         logger.error(
-            "Command timed out"
+            "Subfinder timed out."
         )
 
-        return []
+        return {
+
+            "success": False,
+
+            "tool": "subfinder",
+
+            "target": target,
+
+            "data": [],
+
+            "error": "Command timed out."
+        }
+
+    except FileNotFoundError:
+
+        logger.error(
+            "Subfinder executable not found."
+        )
+
+        return {
+
+            "success": False,
+
+            "tool": "subfinder",
+
+            "target": target,
+
+            "data": [],
+
+            "error": "Subfinder is not installed."
+        }
 
     except Exception as error:
 
-        logger.error(
-            f"Subfinder failed: {error}"
+        logger.exception(
+            "Subfinder execution failed."
         )
 
-        return []
+        return {
+
+            "success": False,
+
+            "tool": "subfinder",
+
+            "target": target,
+
+            "data": [],
+
+            "error": str(error)
+        }

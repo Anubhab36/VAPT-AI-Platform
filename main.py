@@ -18,10 +18,7 @@ from agents.recon_agent import (
 )
 
 from utils.task_manager import (
-    create_task
-)
-
-from utils.task_manager import (
+    create_task,
     get_all_tasks
 )
 
@@ -54,7 +51,17 @@ from utils.cache_manager import (
     cache_exists
 )
 
-from vapt_adk.runner import ask_agent
+from utils.storage_manager import (
+    initialize_storage
+)
+
+from utils.target_validator import (
+    validate_target
+)
+
+from vapt_adk.runner import (
+    ask_agent
+)
 
 app = FastAPI(
     title=APP_NAME
@@ -66,6 +73,8 @@ templates = Jinja2Templates(
 
 initialize_database()
 
+initialize_storage()
+
 logger.info(
     f"{APP_NAME} starting..."
 )
@@ -73,6 +82,7 @@ logger.info(
 
 class ReconRequest(BaseModel):
     target: str
+
 
 class AgentRequest(BaseModel):
     message: str
@@ -82,9 +92,7 @@ class AgentRequest(BaseModel):
 def home():
 
     return {
-        "message": (
-            "VAPT AI Platform Running"
-        )
+        "message": "VAPT AI Platform Running"
     }
 
 
@@ -128,9 +136,7 @@ def scan_history(
     )
 ):
 
-    scans = get_recent_scans(
-        limit
-    )
+    scans = get_recent_scans(limit)
 
     return {
         "history": scans
@@ -150,7 +156,9 @@ def analytics(
     if cache_exists(cache_key):
 
         return {
+
             "source": "cache",
+
             "data": get_cache(
                 cache_key
             )
@@ -166,7 +174,9 @@ def analytics(
     )
 
     return {
+
         "source": "database",
+
         "data": analytics_data
     }
 
@@ -181,6 +191,21 @@ async def run_recon(
     )
 ):
 
+    valid, result = validate_target(
+        request.target
+    )
+
+    if not valid:
+
+        return {
+
+            "status": "error",
+
+            "message": result
+        }
+
+    request.target = result
+
     scan_id = str(
         uuid.uuid4()
     )
@@ -193,6 +218,7 @@ async def run_recon(
     asyncio.create_task(
 
         run_async_task(
+            scan_id,
             recon_agent,
             request.target
         )
@@ -215,7 +241,9 @@ async def run_recon(
 
 @app.post("/agent")
 async def agent_chat(
+
     request: AgentRequest,
+
     authorized: bool = Depends(
         verify_api_key
     )
@@ -234,8 +262,11 @@ async def agent_chat(
         if not request.message.strip():
 
             return {
+
                 "status": "error",
-                "message": "Message cannot be empty."
+
+                "message":
+                    "Message cannot be empty."
             }
 
         logger.info(

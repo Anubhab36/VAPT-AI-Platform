@@ -8,21 +8,36 @@ from config.settings import (
 
 
 def run_httpx(subdomains):
+    """
+    Executes HTTPX against discovered
+    subdomains and returns a standardized
+    response object.
+    """
 
     if not subdomains:
 
-        return []
+        return {
+
+            "success": True,
+
+            "tool": "httpx",
+
+            "target": None,
+
+            "data": [],
+
+            "error": None
+        }
+
+    command = [
+        "httpx",
+        "-silent"
+    ]
 
     try:
 
-        command = [
-            "httpx",
-            "-silent"
-        ]
-
         logger.info(
-            f"Executing command: "
-            f"{' '.join(command)}"
+            f"Executing command: {' '.join(command)}"
         )
 
         process = subprocess.run(
@@ -40,30 +55,83 @@ def run_httpx(subdomains):
 
         output = process.stdout.strip()
 
-        if not output:
-
-            return []
-
-        live_hosts = output.splitlines()
-
-        logger.info(
-            "Command executed successfully"
+        live_hosts = (
+            output.splitlines()
+            if output
+            else []
         )
 
-        return live_hosts
+        logger.info(
+            f"HTTPX discovered "
+            f"{len(live_hosts)} live hosts."
+        )
+
+        return {
+
+            "success": True,
+
+            "tool": "httpx",
+
+            "target": None,
+
+            "data": live_hosts,
+
+            "error": None
+        }
 
     except subprocess.TimeoutExpired:
 
         logger.error(
-            "Command timed out"
+            "HTTPX timed out."
         )
 
-        return []
+        return {
+
+            "success": False,
+
+            "tool": "httpx",
+
+            "target": None,
+
+            "data": [],
+
+            "error": "Command timed out."
+        }
+
+    except FileNotFoundError:
+
+        logger.error(
+            "HTTPX executable not found."
+        )
+
+        return {
+
+            "success": False,
+
+            "tool": "httpx",
+
+            "target": None,
+
+            "data": [],
+
+            "error": "HTTPX is not installed."
+        }
 
     except Exception as error:
 
-        logger.error(
-            f"HTTPX failed: {error}"
+        logger.exception(
+            "HTTPX execution failed."
         )
 
-        return []
+        return {
+
+            "success": False,
+
+            "tool": "httpx",
+
+            "target": None,
+
+            "data": [],
+
+            "error": str(error)
+        }

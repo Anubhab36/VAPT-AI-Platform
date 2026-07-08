@@ -8,28 +8,27 @@ from config.settings import (
 
 
 def run_nmap(target):
+    """
+    Executes Nmap and returns a
+    standardized response object.
+    """
+
+    command = [
+        "nmap",
+        "-F",
+        target
+    ]
 
     try:
 
-        command = [
-            "nmap",
-            "-F",
-            target
-        ]
-
         logger.info(
-            f"Executing command: "
-            f"{' '.join(command)}"
+            f"Executing command: {' '.join(command)}"
         )
 
         result = subprocess.run(
-
             command,
-
             capture_output=True,
-
             text=True,
-
             timeout=COMMAND_TIMEOUT
         )
 
@@ -43,33 +42,87 @@ def run_nmap(target):
 
                 parts = line.split()
 
-                ports.append({
+                if len(parts) >= 3:
 
-                    "port": parts[0],
+                    ports.append({
 
-                    "state": parts[1],
+                        "port": parts[0],
 
-                    "service": parts[2]
-                })
+                        "state": parts[1],
+
+                        "service": parts[2]
+                    })
 
         logger.info(
-            "Command executed successfully"
+            f"Nmap discovered {len(ports)} open ports."
         )
 
-        return ports
+        return {
+
+            "success": True,
+
+            "tool": "nmap",
+
+            "target": target,
+
+            "data": ports,
+
+            "error": None
+        }
 
     except subprocess.TimeoutExpired:
 
         logger.error(
-            "Command timed out"
+            "Nmap timed out."
         )
 
-        return []
+        return {
+
+            "success": False,
+
+            "tool": "nmap",
+
+            "target": target,
+
+            "data": [],
+
+            "error": "Command timed out."
+        }
+
+    except FileNotFoundError:
+
+        logger.error(
+            "Nmap executable not found."
+        )
+
+        return {
+
+            "success": False,
+
+            "tool": "nmap",
+
+            "target": target,
+
+            "data": [],
+
+            "error": "Nmap is not installed."
+        }
 
     except Exception as error:
 
-        logger.error(
-            f"Nmap failed: {error}"
+        logger.exception(
+            "Nmap execution failed."
         )
 
-        return []
+        return {
+
+            "success": False,
+
+            "tool": "nmap",
+
+            "target": target,
+
+            "data": [],
+
+            "error": str(error)
+        }
