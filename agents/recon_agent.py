@@ -5,7 +5,9 @@ from concurrent.futures import ThreadPoolExecutor
 from tools.subfinder_tool import run_subfinder
 from tools.nmap_tool import run_nmap
 from tools.httpx_tool import run_httpx
-from tools.mock_vuln_tool import run_mock_vulnerability_scan
+from tools.nuclei_tool import (
+    run_nuclei
+)
 
 from utils.helpers import (
     generate_scan_id,

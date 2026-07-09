@@ -21,6 +21,13 @@ DEBUG = os.getenv(
 COMMAND_TIMEOUT = int(
     os.getenv(
         "COMMAND_TIMEOUT",
-        15
+        30
+    )
+)
+
+NUCLEI_TIMEOUT = int(
+    os.getenv(
+        "NUCLEI_TIMEOUT",
+        600
     )
 )

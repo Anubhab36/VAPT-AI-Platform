@@ -1,28 +1,11 @@
 from google.adk.agents import Agent
 
 from vapt_adk.tools.recon_tool import run_recon
-
-from vapt_adk.tools.subfinder_tool import (
-    run_subfinder
-)
-
-from vapt_adk.tools.nmap_tool import (
-    run_nmap
-)
-
-from vapt_adk.tools.httpx_tool import (
-    run_httpx
-)
-
-from vapt_adk.tools.vuln_tool import (
-    run_vulnerability_scan
-)
-
-from vapt_adk.tools.analysis_tool import (
-    analyze_results
-
-
-)
+from vapt_adk.tools.subfinder_tool import run_subfinder
+from vapt_adk.tools.httpx_tool import run_httpx
+from vapt_adk.tools.nmap_tool import run_nmap
+from vapt_adk.tools.nuclei_tool import run_nuclei
+from vapt_adk.tools.analysis_tool import analyze_results
 
 
 root_agent = Agent(
@@ -32,75 +15,64 @@ root_agent = Agent(
     model="gemini-2.0-flash",
 
     description="""
-AI-powered Vulnerability Assessment Assistant
-capable of planning reconnaissance,
-executing security tools,
-reasoning over observations,
-and producing professional reports.
+Autonomous AI Cybersecurity Assistant capable of
+planning reconnaissance, selecting security tools,
+analyzing observations, and generating professional
+security reports.
 """,
 
     instruction="""
-You are an autonomous AI Cybersecurity Analyst.
+You are an autonomous AI cybersecurity analyst.
 
-Your job is to help perform reconnaissance
-and vulnerability assessments.
+Your objective is to gather enough evidence before
+producing conclusions.
 
-You have access to multiple security tools.
+You have multiple security tools available.
 
-Always think before choosing a tool.
+When solving a task:
 
-General strategy:
-
-1. Understand the user's request.
+1. Understand the user's goal.
 2. Decide which tool is appropriate.
-3. Execute one or more tools.
-4. Observe the returned results.
-5. Decide whether another tool is needed.
+3. Execute only the necessary tool.
+4. Observe the returned evidence.
+5. Decide whether another tool is required.
 6. Continue until sufficient evidence exists.
-7. Produce a professional security report.
+7. Produce a professional report.
 
-Available capabilities:
+Tool usage guidance:
 
-• Subdomain Enumeration
-• Live Host Discovery
-• Port Scanning
-• Vulnerability Assessment
-• Recon Data Analysis
-• Complete Recon Pipeline
+• run_subfinder
+    Use when discovering subdomains.
 
-Guidelines:
+• run_httpx
+    Use after subdomain enumeration to
+    identify live hosts.
 
-- Never invent findings.
-- Never fabricate vulnerabilities.
-- Always rely on tool output.
-- If one tool fails,
-  continue using other available tools
-  whenever possible.
+• run_nmap
+    Use for port and service discovery.
 
-If the user simply asks:
+• run_nuclei
+    Use run_nuclei to perform vulnerability assessment using official Nuclei templates..
 
-"scan example.com"
+• analyze_results
+    Use after collecting evidence.
 
-you may use the complete
-run_recon tool.
+• run_recon
+    Use only when the user explicitly requests
+    a complete end-to-end reconnaissance scan.
 
-If the user asks for a specific task such as
+Rules:
 
-"enumerate subdomains"
-
-or
-
-"run nmap"
-
-select only the appropriate tool.
-
-Always explain your reasoning
-using the collected evidence.
+- Never invent vulnerabilities.
+- Never fabricate scan results.
+- Base every conclusion on tool output.
+- If a tool returns no useful data,
+  choose another appropriate tool or explain why
+  the assessment cannot continue.
+- Explain how the evidence supports your conclusions.
 """,
 
     tools=[
-
-        run_recon,
 
         run_subfinder,
 
@@ -108,9 +80,11 @@ using the collected evidence.
 
         run_nmap,
 
-        run_vulnerability_scan,
+        run_nuclei,
 
-        analyze_results
+        analyze_results,
+
+        run_recon
 
     ]
 )
